@@ -1,29 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-import yaml
 import argparse
-import itertools
-from collections import defaultdict
-from pathlib import Path
-import multiprocessing
-from multiprocessing import Pool, cpu_count
-import concurrent.futures
+import time
+
 import yaml
-import argparse
-import itertools
-from collections import defaultdict
-from pathlib import Path
-import multiprocessing
-from multiprocessing import Pool, cpu_count
-import concurrent.futures
-from typing import Dict, List
-from BLRun.runner import Runner
-import os
-import pandas as pd
 
 import BLRun as br
+
 yaml.warnings({'YAMLLoadWarning': False})
 
 
@@ -58,8 +42,8 @@ def main():
     with open(config_file, 'r') as conf:
         evaluation = br.ConfigParser.parse(conf)
     print(evaluation)
+    start_time = time.process_time()
     print('Evaluation started')
-
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
@@ -71,6 +55,8 @@ def main():
         evaluation.runners[idx].parseOutput()
 
     print('Evaluation complete')
+    end_time = time.process_time()
+    print(f'Execution of algorithms completed in {end_time-start_time:0.2f} seconds')
 
 
 if __name__ == '__main__':
