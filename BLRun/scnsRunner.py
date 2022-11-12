@@ -1,9 +1,11 @@
 import os
-from pathlib import Path
-import pandas as pd
-from itertools import permutations
-from collections import Counter
 import re
+from collections import Counter
+from itertools import permutations
+from pathlib import Path
+
+import pandas as pd
+
 
 def generateInputs(RunnerObj):
     '''
@@ -96,7 +98,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir)
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/', 
+    cmdToRun = ' '.join(['podman run --rm -v', str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/', 
                          'grnbeeline/scns:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
                          'mono SynthesisEngine.exe', inputPath+'ExpressionData.csv',
                           inputPath+'Edges.csv',  inputPath+'Parameters.csv',

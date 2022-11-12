@@ -1,7 +1,9 @@
 import os
-import pandas as pd
 from pathlib import Path
+
 import numpy as np
+import pandas as pd
+
 
 def generateInputs(RunnerObj):
     '''
@@ -31,7 +33,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = 'data/'+ str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data grnbeeline/pidc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'julia runPIDC.jl',
+    cmdToRun = ' '.join(['podman run --rm -v', str(Path.cwd())+':/data grnbeeline/pidc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'julia runPIDC.jl',
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

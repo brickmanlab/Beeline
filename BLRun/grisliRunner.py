@@ -1,7 +1,9 @@
 import os
-import pandas as pd
 from pathlib import Path
+
 import numpy as np
+import pandas as pd
+
 
 def generateInputs(RunnerObj):
     '''
@@ -60,7 +62,7 @@ def run(RunnerObj):
 
         outFile = "data/" +  str(outDir) +str(idx)+"/outFile.txt"
 
-        cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grnbeeline/grisli:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt', './GRISLI ',inputPath, outFile, L, R, alphaMin,'\"'])
+        cmdToRun = ' '.join(['podman run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grnbeeline/grisli:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt', './GRISLI ',inputPath, outFile, L, R, alphaMin,'\"'])
     
         print(cmdToRun)
         os.system(cmdToRun)
