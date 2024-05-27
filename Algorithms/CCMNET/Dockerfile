@@ -7,6 +7,6 @@ RUN apt update && \
     apt install -y time && \
     rm -rf /var/cache/apt/archives /var/lib/apt/lists
 
-RUN pip install --no-cache-dir git+https://github.com/brickmanlab/ccmnet.git@dev
+RUN pip install --no-cache-dir git+https://github.com/brickmanlab/ccmnet.git
 
 RUN mkdir data/
