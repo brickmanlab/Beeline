@@ -1,0 +1,220 @@
+input_settings:
+  input_dir: inputs
+  dataset_dir: Synthetic/dyn-LI
+  datasets:
+    - name: dyn-LI-100-1
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-2
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-3
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-4
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-5
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-6
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-7
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-8
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-9
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-100-10
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-1
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-2
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-3
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-4
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-5
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-6
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-7
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-8
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-9
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-200-10
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-1
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-2
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-3
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-4
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-5
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-6
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-7
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-8
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-9
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-500-10
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-1
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-2
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-3
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-4
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-5
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-6
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-7
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-8
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-9
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-2000-10
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-1
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-2
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-3
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-4
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-5
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-6
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-7
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-8
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-9
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+    - name: dyn-LI-5000-10
+      exprData: ExpressionData.csv
+      cellData: PseudoTime.csv
+      trueEdges: refNetwork.csv
+  algorithms:
+    - name: GRNBOOST2
+      params:
+        should_run:
+          - true
+    - name: CCMNET
+      params:
+        should_run:
+          - true
+        scale:
+          - true
+        skip_filtering:
+          - true
+output_settings:
+  output_dir: outputs
+  output_prefix: dyn-LI
