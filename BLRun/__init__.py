@@ -9,29 +9,18 @@ BEELINE Run (:mod:`BLRun`) module contains the following main class:
 
 """
 
-import yaml
-import argparse
+import concurrent.futures
 import itertools
+import os
+import pathlib
 from collections import defaultdict
 from glob import glob
-import pathlib
 from pathlib import Path
-import multiprocessing
-from multiprocessing import Pool, cpu_count
-import concurrent.futures
 from typing import Dict, List
+
 import yaml
-import argparse
-import itertools
-from collections import defaultdict
-from pathlib import Path
-import multiprocessing
-from multiprocessing import Pool, cpu_count
-import concurrent.futures
-from typing import Dict, List
+
 from BLRun.runner import Runner
-import os
-import pandas as pd
 
 
 class InputSettings(object):
@@ -109,7 +98,7 @@ class BLRun(object):
         batches =  self.runners.keys()
 
         for batch in batches:
-            if parallel==True:
+            if parallel is True:
                 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
                 futures = [executor.submit(runner.run, base_output_dir)
                     for runner in self.runners[batch]]

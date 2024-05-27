@@ -1,17 +1,26 @@
 #!/usr/bin/env python
 
 import argparse
-import subprocess
-import glob
-import yaml
-import pandas as pd
 import itertools
-import numpy as np
+import pickle
 from typing import Any, Dict
-from sklearn.metrics import accuracy_score, f1_score, mean_squared_error, roc_auc_score, roc_curve, precision_recall_curve, auc, confusion_matrix, adjusted_rand_score
-from sklearn.preprocessing import MinMaxScaler
-from rpy2.robjects.packages import importr
-from rpy2.robjects import FloatVector
+
+import pandas as pd
+import yaml
+from sklearn.metrics import (
+    auc,
+    accuracy_score,
+    average_precision_score,
+    brier_score_loss,
+    confusion_matrix,
+    f1_score,
+    jaccard_score,
+    matthews_corrcoef,
+    precision_recall_curve,
+    roc_auc_score,
+    roc_curve,
+    cohen_kappa_score
+)
 
 
 def read_config(path: str) -> Dict[str, Any]:
@@ -21,32 +30,59 @@ def read_config(path: str) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-
     arg_parser = argparse.ArgumentParser(
         description="Custom GRN evaluation (TPR, FPR, F1-score)"
     )
     # arg_parser.add_argument("--folder", help="Folder path [str]", action="store", type=str)
-    arg_parser.add_argument("--config", help="Configuration file [str]", action="store", type=str, required=True)
+    arg_parser.add_argument(
+        "--config",
+        help="Configuration file [str]",
+        action="store",
+        type=str,
+        required=True,
+    )
     args = arg_parser.parse_args()
 
     # config-files/Synthetic/dyn-LI.yaml
     config = read_config(args.config)
-    joiner: str = "#"
+    DELIMINTER: str = "#"
 
-    algorithms = [x['name'] for x in config['input_settings']['algorithms']]
+    algorithms = [x["name"] for x in config["input_settings"]["algorithms"]]
+    datasets = config["input_settings"]["datasets"]
+    metrics = {}
 
-    metrics_auroc = []
-    metrics_tpr = []
-    metrics_fpr = []
-    metrics_f1 = []
-    metrics_ri = []
-    for dataset in config['input_settings']['datasets']:
+    for dataset in datasets:
+        metrics[dataset["name"]] = {
+            alg: {
+                "tn": 0,
+                "fp": 0,
+                "fn": 0,
+                "tp": 0,
+                "accuracy_score": 0,
+                "brier_score_loss": 0,
+                "jaccard_score": 0,
+                "auroc": 0,
+                "auprc": 0,
+                "average_precision_score": 0,
+                "f1_micro": 0,
+                "f1_macro": 0,
+                "f1_weighted": 0,
+                "tpr": 0,
+                "fpr": 0,
+                "fdr": 0,
+                "mcc": 0,
+                "cohen_kappa": 0,
+            }
+            for alg in algorithms
+        }
 
-        aurocs, tprs, fprs, f1s, ris = [], [], [], [], []
+        in_path: str = (
+            f"{config['input_settings']['input_dir']}/{config['input_settings']['dataset_dir']}/{dataset['name']}"
+        )
+        out_path: str = (
+            f"{config['output_settings']['output_dir']}/{config['input_settings']['dataset_dir']}/{dataset['name']}"
+        )
 
-        in_path: str = f"{config['input_settings']['input_dir']}/{config['input_settings']['dataset_dir']}/{dataset['name']}"
-        out_path: str = f"{config['output_settings']['output_dir']}/{config['input_settings']['dataset_dir']}/{dataset['name']}"
-        
         for algorithm in algorithms:
 
             expr_file: str = f"{in_path}/{dataset['exprData']}"
@@ -54,60 +90,89 @@ if __name__ == "__main__":
             infered_file: str = f"{out_path}/{algorithm}/rankedEdges.csv"
 
             genes = pd.read_csv(expr_file, index_col=0).index
-            
+
             # ignores self-edge by default
-            permutations = [f"{x[0]}{joiner}{x[1]}" for x in itertools.permutations(genes, 2)]
+            pairwise_genes = list(
+                map(DELIMINTER.join, itertools.permutations(genes, 2))
+            )
 
-            df = pd.DataFrame(0, index=permutations, columns=['reference', 'predicted'])
+            # Gold standard network
+            gold_net = pd.read_csv(reference_file)
+            gold_net_interactions = gold_net[["Gene1", "Gene2"]].agg(
+                DELIMINTER.join, axis=1
+            )
 
-            # create labels from reference.csv
-            reference = pd.read_csv(reference_file)
-            reference = [f"{x[0]}{joiner}{x[1]}" for x in zip(reference['Gene1'], reference['Gene2']) if x[0] != x[1]]
-            df.loc[reference, 'reference'] = 1.0
+            # predicted network (rankedEdges.csv)
+            predicted = pd.read_csv(infered_file, sep="\t").query("EdgeWeight > 0")
+            predicted_net_interactions = predicted[["Gene1", "Gene2"]].agg(
+                DELIMINTER.join, axis=1
+            )
+            # predicted["key"] = predicted_net_interactions
 
-            # create prediction from rankedEdges.csv
-            infered_df = pd.read_csv(infered_file, sep='\t')
-            infered_df['pairwise'] = infered_df[['Gene1', 'Gene2']].agg(f'{joiner}'.join, axis=1)
-            infered_df = infered_df.set_index('pairwise')
+            # Dataframe containing both reference and predicted
+            evaluation = pd.DataFrame(
+                0, index=pairwise_genes, columns=["reference", "predicted"]
+            )
+            evaluation.loc[
+                evaluation.index.intersection(gold_net_interactions), "reference"
+            ] = 1
+            evaluation.loc[
+                evaluation.index.intersection(predicted_net_interactions), "predicted"
+            ] = 1
+            # evaluation.loc[
+            #     evaluation.index.intersection(predicted_net_interactions), "predicted"
+            # ] = (
+            #     predicted.set_index("key")
+            #     .loc[
+            #         evaluation.index.intersection(predicted_net_interactions),
+            #         "EdgeWeight",
+            #     ]
+            #     .values
+            # )
 
-            # get common gene pairwise
-            common_pairwise = np.intersect1d(infered_df.index, df.index)
-            df.loc[common_pairwise, 'predicted'] = infered_df.loc[common_pairwise, 'EdgeWeight'].values
+            y_true, y_pred = evaluation.reference.ravel(), evaluation.predicted.ravel()
 
-            fpr, tpr, thresholds = roc_curve(y_true=df['reference'],
-                                            y_score=df['predicted'], pos_label=1)
-
-            # prec, recall, thresholds = precision_recall_curve(y_true=df['reference'],
-            #                                                 probas_pred=df['predicted'], pos_label=1)
-
-            y_true = df['reference'].values
-            predicted = df['predicted'].values.astype(np.float32)
-            y_pred = np.round(np.interp(predicted, (predicted.min(), predicted.max()), (0, 1)))
-            # y_pred = np.round(np.interp(df['predicted'].values, (df['predicted'].values.min(), df['predicted'].values.max()), (0, 1)))
             TN, FP, FN, TP = confusion_matrix(y_true, y_pred).ravel()
             F1 = TP / (TP + 0.5 * (FP + FN))
-            TPR = TP / (TP + FN)
-            FPR = FP / (FP + TN)
-            AUROC = auc(fpr, tpr)
-            # RI = adjusted_rand_score(y_true, y_pred)
-            RI = (TP + TN) / (TP + FP + FN + TN)
+            # TPR = TP / (TP + FN)
+            # FPR = FP / (FP + TN)
+            FDR = FP / (FP + TP)
 
-            aurocs.append(AUROC)
-            tprs.append(TPR)
-            fprs.append(FPR)
-            f1s.append(F1)
-            ris.append(RI)
+            FPR, TPR, thresholds = roc_curve(y_true, y_pred, pos_label=1)
+            PRECISION, RECALL, thresholds = precision_recall_curve(y_true, y_pred, pos_label=1)
 
-        metrics_auroc.append([dataset['name']] + aurocs)
-        metrics_tpr.append([dataset['name']] + tprs)
-        metrics_fpr.append([dataset['name']] + fprs)
-        metrics_f1.append([dataset['name']] + f1s)
-        metrics_ri.append([dataset['name']] + ris)
-    
-    metrics_path: str = f"{config['output_settings']['output_dir']}/{config['input_settings']['dataset_dir']}"
+            metrics[dataset["name"]][algorithm]["tn"] = TN
+            metrics[dataset["name"]][algorithm]["fp"] = FP
+            metrics[dataset["name"]][algorithm]["fn"] = FN
+            metrics[dataset["name"]][algorithm]["tp"] = TP
 
-    pd.DataFrame(metrics_auroc, columns=['dataset'] + algorithms).set_index('dataset').to_csv(f"{metrics_path}/auroc.csv")
-    pd.DataFrame(metrics_tpr, columns=['dataset'] + algorithms).set_index('dataset').to_csv(f"{metrics_path}/tpr.csv")
-    pd.DataFrame(metrics_fpr, columns=['dataset'] + algorithms).set_index('dataset').to_csv(f"{metrics_path}/fpr.csv")
-    pd.DataFrame(metrics_f1, columns=['dataset'] + algorithms).set_index('dataset').to_csv(f"{metrics_path}/f1.csv")
-    pd.DataFrame(metrics_ri, columns=['dataset'] + algorithms).set_index('dataset').to_csv(f"{metrics_path}/ri.csv")
+            metrics[dataset["name"]][algorithm]["accuracy_score"] = accuracy_score(y_true, y_pred)
+            metrics[dataset["name"]][algorithm]["brier_score_loss"] = brier_score_loss(y_true, y_pred)
+            metrics[dataset["name"]][algorithm]["jaccard_score"] = jaccard_score(y_true, y_pred)
+            metrics[dataset["name"]][algorithm]["auroc"] = roc_auc_score(y_true, y_pred)
+            metrics[dataset["name"]][algorithm]["auprc"] = auc(RECALL, PRECISION)
+            metrics[dataset["name"]][algorithm]["average_precision_score"] = average_precision_score(
+                y_true, y_pred
+            )
+            metrics[dataset["name"]][algorithm]["f1_micro"] = f1_score(
+                y_true, y_pred, average="micro"
+            )
+            metrics[dataset["name"]][algorithm]["f1_macro"] = f1_score(
+                y_true, y_pred, average="macro"
+            )
+            metrics[dataset["name"]][algorithm]["f1_weighted"] = f1_score(
+                y_true, y_pred, average="weighted"
+            )
+            metrics[dataset["name"]][algorithm]["tpr"] = TPR
+            metrics[dataset["name"]][algorithm]["fpr"] = FPR
+            metrics[dataset["name"]][algorithm]["fdr"] = FDR
+            metrics[dataset["name"]][algorithm]["mcc"] = matthews_corrcoef(
+                y_true, y_pred
+            )
+            metrics[dataset["name"]][algorithm]["cohen_kappa"] = cohen_kappa_score(y_true, y_pred)
+
+    metrics_path: str = (
+        f"{config['output_settings']['output_dir']}/{config['input_settings']['dataset_dir']}"
+    )
+    with open(f"{metrics_path}/metrics_v2.pkl", "wb") as f:
+        pickle.dump(metrics, f)

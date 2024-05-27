@@ -1,19 +1,18 @@
-import BLRun.scodeRunner as SCODE
-import BLRun.scnsRunner as SCNS
-import BLRun.sinceritiesRunner as SINCERITIES
-import BLRun.pidcRunner as PIDC
-import BLRun.grnvbemRunner as GRNVBEM
+import BLRun.ccmnetRunner as CCMNET
 import BLRun.genie3Runner as GENIE3
-import BLRun.grnboost2Runner as GRNBOOST2
-import BLRun.leapRunner as LEAP
-import BLRun.jump3Runner as JUMP3
-import BLRun.ppcorRunner as PPCOR
 import BLRun.grisliRunner as GRISLI
-import BLRun.singeRunner as SINGE
+import BLRun.grnboost2Runner as GRNBOOST2
+import BLRun.grnvbemRunner as GRNVBEM
+import BLRun.jump3Runner as JUMP3
+import BLRun.leapRunner as LEAP
+import BLRun.pidcRunner as PIDC
+import BLRun.ppcorRunner as PPCOR
+import BLRun.scnsRunner as SCNS
+import BLRun.scodeRunner as SCODE
 import BLRun.scribeRunner as SCRIBE
 import BLRun.scsglRunner as SCSGL
-
-from pathlib import Path
+import BLRun.sinceritiesRunner as SINCERITIES
+import BLRun.singeRunner as SINGE
 
 InputMapper = {'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
@@ -28,7 +27,8 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GRISLI':GRISLI.generateInputs,
                'SINGE':SINGE.generateInputs,
                'SCRIBE':SCRIBE.generateInputs,
-               'SCSGL':SCSGL.generateInputs}
+               'SCSGL':SCSGL.generateInputs,
+               'CCMNET':CCMNET.generateInputs}
 
 
 
@@ -46,7 +46,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GRISLI':GRISLI.run,
             'SINGE':SINGE.run,
             'SCRIBE':SCRIBE.run,
-            'SCSGL':SCSGL.run}
+            'SCSGL':SCSGL.run,
+            'CCMNET':CCMNET.run}
 
 
 
@@ -63,7 +64,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GRISLI':GRISLI.parseOutput,
             'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput,
-            'SCSGL':SCSGL.parseOutput}
+            'SCSGL':SCSGL.parseOutput,
+            'CCMNET':CCMNET.parseOutput}
 
 
 class Runner(object):
