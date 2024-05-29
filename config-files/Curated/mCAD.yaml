@@ -134,7 +134,7 @@ input_settings:
         scale:
           - true
         skip_filtering:
-          - true
+          - false
 output_settings:
   output_dir: outputs
   output_prefix: mCAD
